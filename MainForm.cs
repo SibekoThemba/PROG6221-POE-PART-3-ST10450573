@@ -112,49 +112,48 @@ namespace CyberSecurityChatbot
         private void DisplayAsciiArt()
         {
             string asciiArt = @"
-    ╔════════════════════════════════════════════════════════════╗
-    ║                                                            ║
-    ║    ╔═══════════════════════════════════════════════════╗   ║
-    ║    ║               🔐  CYBER  🔐                      ║   ║
-    ║    ║          ╔═══╗ ╔═══╗ ╔═══╗ ╔═══╗ ╔═══╗         ║   ║
-    ║    ║          ║ C ║ ║ Y ║ ║ B ║ ║ E ║ ║ R ║         ║   ║
-    ║    ║          ╚═══╝ ╚═══╝ ╚═══╝ ╚═══╝ ╚═══╝         ║   ║
-    ║    ║          ╔═══╗ ╔═══╗ ╔═══╗ ╔═══╗ ╔═══╗ ╔═══╗   ║   ║
-    ║    ║          ║ S ║ ║ E ║ ║ C ║ ║ U ║ ║ R ║ ║ E ║   ║   ║
-    ║    ║          ╚═══╝ ╚═══╝ ╚═══╝ ╚═══╝ ╚═══╝ ╚═══╝   ║   ║
-    ║    ║                                                   ║   ║
-    ║    ║        🛡️ AWARENESS CHATBOT 🛡️                  ║   ║
-    ║    ║          🔒 Stay Safe Online 🔒                   ║   ║
-    ║    ╚═══════════════════════════════════════════════════╝   ║
-    ║                                                            ║
-    ╚════════════════════════════════════════════════════════════╝";
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║                                                                          ║
+    ║                          🔐  C H A T B O X  🔐                          ║
+    ║                                                                          ║
+    ║              ╔═══════════════════════════════════════════════╗            ║
+    ║              ║       🛡️  CYBERSECURITY AWARENESS  🛡️       ║            ║
+    ║              ║           🔒  Stay Safe Online  🔒           ║            ║
+    ║              ╚═══════════════════════════════════════════════╝            ║
+    ║                                                                          ║
+    ║          Your Digital Safety Companion - Ask me anything about security!  ║
+    ║                                                                          ║
+    ╚══════════════════════════════════════════════════════════════════════════╝";
 
             txtAsciiArt.Text = asciiArt;
-            txtAsciiArt.Font = new Font("Consolas", 8);
+            txtAsciiArt.Font = new Font("Consolas", 10, FontStyle.Bold);
             txtAsciiArt.ForeColor = Color.Cyan;
-            txtAsciiArt.BackColor = Color.FromArgb(10, 10, 20);
+            txtAsciiArt.BackColor = Color.FromArgb(10, 10, 30);
+            txtAsciiArt.TextAlign = HorizontalAlignment.Center;
+            txtAsciiArt.Size = new Size(970, 140);
         }
 
         private void DisplayWelcomeMessage()
         {
+            rtbChat.Clear();
             rtbChat.AppendText("\n" + new string('═', 60) + "\n");
-            rtbChat.AppendText("🌐 Welcome to the Cybersecurity Awareness Chatbot\n");
+            rtbChat.AppendText("  🌐  Welcome to the Cybersecurity Awareness Chatbot  🌐\n");
             rtbChat.AppendText(new string('═', 60) + "\n\n");
 
             if (string.IsNullOrEmpty(userName))
             {
-                rtbChat.AppendText("🤖: Hello! What is your name?\n");
+                rtbChat.AppendText("🤖: Hello! Welcome to the ChatBox. What is your name?\n");
                 rtbChat.AppendText("👤: ");
             }
             else
             {
-                rtbChat.AppendText($"🤖: Welcome back, {userName}! How can I help you today?\n");
-                rtbChat.AppendText("🤖: You can ask me about:\n");
-                rtbChat.AppendText("   • Cybersecurity tips (password, phishing, safe browsing)\n");
-                rtbChat.AppendText("   • Add or manage tasks (click the Tasks tab)\n");
-                rtbChat.AppendText("   • Take a cybersecurity quiz (click the Quiz tab)\n");
-                rtbChat.AppendText("   • View your activity log (click the Activity Log tab)\n");
-                rtbChat.AppendText("   • Type 'help' for more options\n");
+                rtbChat.AppendText($"🤖: Welcome back to the ChatBox, {userName}! 👋\n\n");
+                rtbChat.AppendText("🤖: I can help you with:\n");
+                rtbChat.AppendText("   • 🔐 Cybersecurity tips (password, phishing, safe browsing)\n");
+                rtbChat.AppendText("   • 📋 Add or manage tasks (click the Tasks tab)\n");
+                rtbChat.AppendText("   • 🎯 Take a cybersecurity quiz (click the Quiz tab)\n");
+                rtbChat.AppendText("   • 📜 View your activity log (click the Activity Log tab)\n");
+                rtbChat.AppendText("   • 💬 Type 'help' for more options\n");
             }
             rtbChat.AppendText("\n" + new string('─', 60) + "\n");
         }
@@ -239,7 +238,8 @@ namespace CyberSecurityChatbot
             if (input.StartsWith("My name is", StringComparison.OrdinalIgnoreCase))
             {
                 userName = input.Substring(10).Trim();
-                rtbChat.AppendText($"🤖: Nice to meet you, {userName}! I'm your Cybersecurity Awareness Assistant.\n");
+                rtbChat.AppendText($"🤖: Nice to meet you, {userName}! Welcome to the ChatBox.\n");
+                rtbChat.AppendText("🤖: I'm your Cybersecurity Awareness Assistant.\n");
                 rtbChat.AppendText("🤖: You can ask me questions or use the tabs above for more features.\n");
                 logger.LogActivity(userName, "Login", $"User '{userName}' logged in");
                 RefreshActivityLog();
@@ -269,26 +269,35 @@ namespace CyberSecurityChatbot
                 return;
             }
 
-            DateTime? reminderDate = null;
-            if (chkReminder.Checked)
+            try
             {
-                reminderDate = dtpReminder.Value;
-            }
+                DateTime? reminderDate = null;
+                if (chkReminder.Checked)
+                {
+                    reminderDate = dtpReminder.Value;
+                }
 
-            if (taskManager.AddTask(userName, title, description, reminderDate))
-            {
-                RefreshTaskList();
-                txtTaskTitle.Clear();
-                txtTaskDesc.Clear();
-                chkReminder.Checked = false;
-                dtpReminder.Enabled = false;
-                RefreshActivityLog();
-                MessageBox.Show("Task added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                bool result = taskManager.AddTask(userName, title, description, reminderDate);
+
+                if (result)
+                {
+                    RefreshTaskList();
+                    txtTaskTitle.Clear();
+                    txtTaskDesc.Clear();
+                    chkReminder.Checked = false;
+                    dtpReminder.Enabled = false;
+                    RefreshActivityLog();
+                    MessageBox.Show("Task added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to add task.\n\nCheck:\n1. SQL Server is running\n2. Database exists\n3. Connection string is correct",
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Failed to add task.\n\nCheck:\n1. SQL Server is running\n2. Database exists\n3. Connection string is correct",
-                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -383,49 +392,49 @@ namespace CyberSecurityChatbot
             {
                 new QuizQuestion("What is the most common type of cyber attack?",
                     new string[] { "A) Phishing", "B) Ransomware", "C) DDoS", "D) Man-in-the-Middle" }, 0,
-                    "Phishing is the most common type of cyber attack."),
+                    "Phishing is the most common type of cyber attack, where attackers trick users into revealing sensitive information."),
                 new QuizQuestion("What should you do if you receive a suspicious email?",
                     new string[] { "A) Reply to ask who sent it", "B) Click the link to check", "C) Report it as phishing", "D) Forward it to friends" }, 2,
-                    "You should report suspicious emails as phishing."),
+                    "You should report suspicious emails as phishing to help protect yourself and others."),
                 new QuizQuestion("Which of the following is a strong password?",
                     new string[] { "A) 123456", "B) password", "C) P@ssw0rd!2024", "D) yourname" }, 2,
                     "A strong password contains uppercase, lowercase, numbers, and special characters."),
                 new QuizQuestion("True or False: Using the same password for multiple accounts is safe.",
                     new string[] { "A) True", "B) False" }, 1,
-                    "Using the same password for multiple accounts is dangerous."),
+                    "Using the same password for multiple accounts is dangerous. If one account is compromised, all others become vulnerable."),
                 new QuizQuestion("What is two-factor authentication (2FA)?",
                     new string[] { "A) A password manager", "B) A second layer of security", "C) A type of antivirus", "D) A VPN service" }, 1,
-                    "2FA adds a second layer of security."),
+                    "2FA adds a second layer of security, typically requiring a code from your phone in addition to your password."),
                 new QuizQuestion("What is social engineering in cybersecurity?",
                     new string[] { "A) Engineering software", "B) Manipulating people to reveal information", "C) Building social networks", "D) Creating engineering designs" }, 1,
-                    "Social engineering is the psychological manipulation of people."),
+                    "Social engineering is the psychological manipulation of people to divulge confidential information."),
                 new QuizQuestion("True or False: Public Wi-Fi is always safe to use for online banking.",
                     new string[] { "A) True", "B) False" }, 1,
-                    "Public Wi-Fi is often unsecured and can be intercepted."),
+                    "Public Wi-Fi is often unsecured and can be intercepted. Use a VPN or mobile data for sensitive transactions."),
                 new QuizQuestion("What should you do with software updates?",
                     new string[] { "A) Ignore them", "B) Install them immediately", "C) Wait a few months", "D) Only install paid updates" }, 1,
-                    "Software updates often contain security patches."),
+                    "Software updates often contain security patches. Install them promptly to protect your devices."),
                 new QuizQuestion("What is ransomware?",
                     new string[] { "A) Free software", "B) Software that holds your data hostage", "C) A type of antivirus", "D) A password manager" }, 1,
-                    "Ransomware is malicious software that encrypts your files."),
+                    "Ransomware is malicious software that encrypts your files and demands payment for decryption."),
                 new QuizQuestion("True or False: Phishing attacks only happen via email.",
                     new string[] { "A) True", "B) False" }, 1,
-                    "Phishing can happen via email, SMS, phone calls, social media, and QR codes."),
+                    "Phishing can happen via email, SMS, phone calls, social media, and even QR codes."),
                 new QuizQuestion("What is the best defense against phishing?",
                     new string[] { "A) Antivirus", "B) Firewall", "C) User awareness", "D) VPN" }, 2,
-                    "User awareness is the best defense against phishing."),
+                    "User awareness is the best defense. Always verify the source before clicking links or sharing information."),
                 new QuizQuestion("True or False: HTTPS websites are always safe.",
                     new string[] { "A) True", "B) False" }, 1,
-                    "HTTPS encrypts data, but the website itself could still be malicious."),
+                    "HTTPS encrypts data, but the website itself could still be malicious. Always check the URL carefully."),
                 new QuizQuestion("What is a zero-day vulnerability?",
                     new string[] { "A) A vulnerability that never existed", "B) A vulnerability discovered before a patch exists", "C) A vulnerability fixed immediately", "D) A vulnerability on Day 0 of a project" }, 1,
-                    "A zero-day vulnerability is a flaw discovered before a patch exists."),
+                    "A zero-day vulnerability is a flaw discovered before the vendor has created a patch, making it very dangerous."),
                 new QuizQuestion("Why should you use a password manager?",
                     new string[] { "A) It remembers all your passwords", "B) It creates strong passwords", "C) It saves you time", "D) All of the above" }, 3,
-                    "Password managers generate, store, and autofill strong passwords."),
+                    "Password managers generate, store, and autofill strong passwords, making security easier and more effective."),
                 new QuizQuestion("True or False: It is safe to use the same password for work and personal accounts.",
                     new string[] { "A) True", "B) False" }, 1,
-                    "Never reuse passwords between work and personal accounts.")
+                    "Never reuse passwords between work and personal accounts. A breach in one could compromise the other.")
             };
         }
 

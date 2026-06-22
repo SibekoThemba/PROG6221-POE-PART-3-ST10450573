@@ -107,29 +107,30 @@
             this.tabChat.Controls.Add(this.rtbChat);
             this.tabChat.Controls.Add(this.txtUserInput);
             this.tabChat.Controls.Add(this.btnSend);
-            this.tabChat.Text = "💬 Chat";
+            this.tabChat.Text = "💬 ChatBox";
             this.tabChat.UseVisualStyleBackColor = true;
 
             // txtAsciiArt
-            this.txtAsciiArt.BackColor = System.Drawing.Color.FromArgb(10, 10, 20);
-            this.txtAsciiArt.Font = new System.Drawing.Font("Consolas", 8F);
+            this.txtAsciiArt.BackColor = System.Drawing.Color.FromArgb(10, 10, 30);
+            this.txtAsciiArt.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold);
             this.txtAsciiArt.ForeColor = System.Drawing.Color.Cyan;
             this.txtAsciiArt.Location = new System.Drawing.Point(10, 10);
             this.txtAsciiArt.Multiline = true;
             this.txtAsciiArt.Name = "txtAsciiArt";
             this.txtAsciiArt.ReadOnly = true;
             this.txtAsciiArt.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.txtAsciiArt.Size = new System.Drawing.Size(970, 180);
+            this.txtAsciiArt.Size = new System.Drawing.Size(970, 140);
             this.txtAsciiArt.TabIndex = 3;
+            this.txtAsciiArt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 
             // rtbChat
             this.rtbChat.BackColor = System.Drawing.Color.White;
             this.rtbChat.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtbChat.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.rtbChat.Location = new System.Drawing.Point(10, 200);
+            this.rtbChat.Location = new System.Drawing.Point(10, 160);
             this.rtbChat.Name = "rtbChat";
             this.rtbChat.ReadOnly = true;
-            this.rtbChat.Size = new System.Drawing.Size(850, 400);
+            this.rtbChat.Size = new System.Drawing.Size(850, 440);
             this.rtbChat.TabIndex = 0;
 
             // txtUserInput
