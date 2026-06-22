@@ -1,42 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CyberSecurityChatbot
 {
     public class NLPSimulator
     {
         private Dictionary<string, List<string>> intentKeywords;
+        private Dictionary<string, List<string>> intentSynonyms;
         private Dictionary<string, string> responseTemplates;
+        private Dictionary<string, List<string>> followUpQuestions;
+        private Random random;
 
         public NLPSimulator()
         {
+            random = new Random();
             InitializeIntents();
+            InitializeSynonyms();
             InitializeResponses();
+            InitializeFollowUpQuestions();
         }
 
         private void InitializeIntents()
         {
             intentKeywords = new Dictionary<string, List<string>>
             {
-                { "add_task", new List<string> { "add task", "new task", "create task", "add to do", "add todo" } },
-                { "reminder", new List<string> { "remind", "reminder", "notify", "alert" } },
-                { "help", new List<string> { "help", "what can you do", "assist", "guide", "help me" } },
-                { "greeting", new List<string> { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening" } },
-                { "goodbye", new List<string> { "bye", "goodbye", "see you", "exit", "quit", "close" } },
-                { "thanks", new List<string> { "thank", "thanks", "appreciate", "thank you" } },
-                { "task_status", new List<string> { "show tasks", "list tasks", "view tasks", "tasks", "my tasks" } },
-                { "quiz", new List<string> { "quiz", "game", "play quiz", "start quiz", "take quiz" } },
-                { "activity_log", new List<string> { "show log", "activity log", "what have you done", "recent actions", "log" } },
-                { "password", new List<string> { "password", "passphrase", "login", "password safety", "secure password" } },
-                { "phishing", new List<string> { "phishing", "scam", "fraud", "suspicious", "email scam" } },
-                { "2fa", new List<string> { "2fa", "two-factor", "multi-factor", "mfa", "two factor", "authentication" } },
-                { "safe_browsing", new List<string> { "safe browsing", "secure browsing", "browser", "browsing" } },
-                { "social_engineering", new List<string> { "social engineering", "manipulation", "human hacking" } },
-                { "malware", new List<string> { "malware", "virus", "ransomware", "trojan", "spyware" } },
-                { "vpn", new List<string> { "vpn", "virtual private network", "private network" } },
-                { "privacy", new List<string> { "privacy", "data privacy", "personal data" } },
-                { "software_updates", new List<string> { "update", "software update", "patch", "security patch" } },
-                { "public_wifi", new List<string> { "public wifi", "wifi", "wireless", "hotspot" } }
+                { "add_task", new List<string> { "add task", "new task", "create task", "add to do", "add todo", "create todo", "make task" } },
+                { "view_tasks", new List<string> { "show tasks", "list tasks", "view tasks", "tasks", "my tasks", "what tasks", "pending tasks", "task list" } },
+                { "complete_task", new List<string> { "complete task", "mark done", "finish task", "task done", "mark complete" } },
+                { "delete_task", new List<string> { "delete task", "remove task", "clear task", "erase task" } },
+                { "reminder", new List<string> { "remind", "reminder", "notify", "alert", "set reminder", "schedule reminder" } },
+                { "help", new List<string> { "help", "what can you do", "assist", "guide", "help me", "options", "menu", "capabilities" } },
+                { "greeting", new List<string> { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening", "greetings", "yo", "sup", "whats up" } },
+                { "goodbye", new List<string> { "bye", "goodbye", "see you", "exit", "quit", "close", "later", "cya", "take care" } },
+                { "thanks", new List<string> { "thank", "thanks", "appreciate", "thank you", "thx", "much appreciated" } },
+                { "activity_log", new List<string> { "show log", "activity log", "what have you done", "recent actions", "log", "history", "show activity" } },
+                { "password", new List<string> { "password", "passphrase", "login", "password safety", "password security", "secure password", "strong password", "passwords" } },
+                { "phishing", new List<string> { "phishing", "scam", "fraud", "suspicious", "email scam", "fake email", "cyber scam", "phishing email", "phishing attack" } },
+                { "2fa", new List<string> { "2fa", "two-factor", "multi-factor", "mfa", "two factor", "authentication", "two step", "2 factor" } },
+                { "safe_browsing", new List<string> { "safe browsing", "secure browsing", "browser", "browsing", "internet safety", "web safety" } },
+                { "social_engineering", new List<string> { "social engineering", "manipulation", "human hacking", "social", "psychology", "trust attack" } },
+                { "malware", new List<string> { "malware", "virus", "ransomware", "trojan", "spyware", "worm", "adware", "keylogger" } },
+                { "vpn", new List<string> { "vpn", "virtual private network", "private network", "encryption", "secure connection" } },
+                { "data_privacy", new List<string> { "privacy", "data privacy", "personal data", "information security", "data protection" } },
+                { "software_updates", new List<string> { "update", "software update", "patch", "security patch", "update software", "system update" } },
+                { "email_security", new List<string> { "email security", "secure email", "email safety", "email protection" } },
+                { "online_banking", new List<string> { "banking", "online banking", "financial security", "bank", "finance" } },
+                { "public_wifi", new List<string> { "public wifi", "wifi", "wireless", "hotspot", "free wifi" } },
+                { "quiz", new List<string> { "quiz", "game", "play quiz", "start quiz", "take quiz", "test", "knowledge test", "cyber quiz" } }
+            };
+        }
+
+        private void InitializeSynonyms()
+        {
+            intentSynonyms = new Dictionary<string, List<string>>
+            {
+                { "password", new List<string> { "pass", "passcode", "secret", "credentials", "login info", "account key" } },
+                { "phishing", new List<string> { "scam", "con", "trick", "deceive", "fake" } },
+                { "malware", new List<string> { "virus", "trojan", "worm", "spyware", "ransomware" } },
+                { "2fa", new List<string> { "2 step", "two step", "multi factor", "authenticator" } },
+                { "privacy", new List<string> { "private", "confidential", "sensitive", "data" } }
             };
         }
 
@@ -44,25 +68,42 @@ namespace CyberSecurityChatbot
         {
             responseTemplates = new Dictionary<string, string>
             {
-                { "add_task", "I can help you add a task! 🗂️ Go to the 'Tasks' tab and fill in the task details. You can add a title, description, and even set a reminder date!" },
-                { "reminder", "I can set reminders for your tasks! 🔔 Go to the 'Tasks' tab, add a task and check 'Set Reminder' to schedule a notification." },
-                { "help", "I'm your Cybersecurity Awareness Assistant! 🛡️ I can help you with:\n\n• Cybersecurity tips (password, phishing, safe browsing)\n• Managing your tasks\n• Taking a cybersecurity quiz\n• Viewing your activity log\n\nType a topic like 'password' or 'phishing' to learn more!" },
-                { "greeting", "Hello! 👋 I'm your Cybersecurity Awareness Assistant. How can I help you today?" },
-                { "goodbye", "Goodbye! 🚀 Remember to stay safe online. Here are some quick tips:\n✅ Use strong passwords\n✅ Enable 2FA\n✅ Be cautious of suspicious emails\n✅ Update your software regularly" },
-                { "thanks", "You're welcome! 😊 I'm always here to help. Stay safe online! 🔒" },
-                { "task_status", "You can view all your tasks in the 'Tasks' tab. 📋 I can help you add, complete, or delete tasks!" },
-                { "quiz", "Great! 🎯 Go to the 'Quiz' tab and click 'Start Quiz' to test your cybersecurity knowledge!" },
-                { "activity_log", "You can view your full activity log in the 'Activity Log' tab. 📜 I track all your actions!" },
-                { "password", "🔐 Password Safety Tips:\n\n• Use strong passwords with uppercase, lowercase, numbers, and symbols\n• Never reuse passwords across different accounts\n• Use a password manager\n• Change passwords regularly\n• Enable 2FA for extra security" },
-                { "phishing", "🎣 Phishing Prevention Tips:\n\n• Don't click suspicious links in emails or messages\n• Always verify sender email addresses\n• Look for spelling and grammar errors\n• Never share personal information via email\n• Report phishing emails to your IT department" },
-                { "2fa", "🔑 Two-Factor Authentication (2FA):\n\n• Adds an extra layer of security to your accounts\n• Requires a code from your phone or authenticator app\n• Even if someone has your password, they can't access your account\n• Enable 2FA on all important accounts" },
-                { "safe_browsing", "🌐 Safe Browsing Tips:\n\n• Always use HTTPS websites (look for the padlock icon)\n• Avoid public Wi-Fi for sensitive transactions\n• Use a VPN for secure browsing\n• Keep your browser updated\n• Don't download from untrusted sources" },
-                { "social_engineering", "🧠 Social Engineering Awareness:\n\n• Be cautious of unsolicited requests for information\n• Verify identities before sharing sensitive data\n• Don't trust unexpected emails or phone calls\n• Hackers manipulate human psychology, not just computers" },
-                { "malware", "🦠 Malware Protection Tips:\n\n• Install reputable antivirus software\n• Keep your operating system updated\n• Don't download files from untrusted sources\n• Be careful with email attachments\n• Regular system scans are important" },
-                { "vpn", "🔒 VPN (Virtual Private Network):\n\n• Encrypts your internet traffic\n• Hides your IP address and location\n• Protects you on public Wi-Fi\n• Choose a reputable VPN provider" },
-                { "privacy", "🔏 Data Privacy Tips:\n\n• Review privacy settings on all accounts\n• Limit what personal information you share online\n• Use privacy-focused browsers and search engines\n• Be careful what you post on social media" },
-                { "software_updates", "📦 Software Update Tips:\n\n• Install updates as soon as they're available\n• Enable automatic updates where possible\n• Security patches fix known vulnerabilities\n• Don't ignore update notifications" },
-                { "public_wifi", "📶 Public Wi-Fi Safety:\n\n• Avoid accessing sensitive accounts on public Wi-Fi\n• Use a VPN when connecting to public networks\n• Turn off file sharing when on public Wi-Fi\n• Use your mobile data for sensitive transactions" }
+                { "add_task", "I can help you add a task! 🗂️ Go to the 'Tasks' tab to add your cybersecurity tasks. You can add a title, description, and even a reminder date. Just type 'help' if you need guidance!" },
+                { "view_tasks", "You can view all your tasks in the 'Tasks' tab. 📋 I can help you add, complete, or delete tasks to stay organised. You currently have tasks pending - check the Tasks tab!" },
+                { "complete_task", "To complete a task, go to the 'Tasks' tab, select a task, and click 'Mark Complete'. Great job staying organised! ✅" },
+                { "delete_task", "To delete a task, go to the 'Tasks' tab, select a task, and click 'Delete Task'. Be careful - this action cannot be undone! 🗑️" },
+                { "reminder", "I can set reminders for your tasks! 🔔 Go to the 'Tasks' tab, add a task and check 'Set Reminder' to schedule a notification. Would you like me to help you set one up now?" },
+                { "help", "I'm your Cybersecurity Awareness Assistant! 🛡️ I can help you with:\n\n• 🔐 Cybersecurity tips (password, phishing, safe browsing)\n• 📋 Managing your tasks (add, complete, delete)\n• 🎯 Taking a cybersecurity quiz\n• 📜 Viewing your activity log\n\nJust type a topic like 'password' or 'phishing' to learn more! What would you like to explore?" },
+                { "greeting", "Hello! 👋 I'm your Cybersecurity Awareness Assistant. I'm here to help you stay safe online! You can ask me about cybersecurity topics, manage tasks, or take a quiz. How can I help you today?" },
+                { "goodbye", "Goodbye! 🚀 Remember to stay safe online with these tips:\n✅ Use strong, unique passwords\n✅ Enable 2FA on important accounts\n✅ Be cautious of suspicious emails\n✅ Update your software regularly\n\nI'm always here if you need help again! 👋" },
+                { "thanks", "You're welcome! 😊 I'm always here to help you stay safe online. Feel free to ask me anything about cybersecurity, tasks, or take the quiz anytime! 🔒" },
+                { "activity_log", "You can view your full activity log in the 'Activity Log' tab. 📜 I track all your tasks, quiz attempts, and conversations to help you see your progress!" },
+                { "password", "🔐 Password Safety Tips:\n\n• Use strong passwords with uppercase, lowercase, numbers, and symbols\n• Never reuse passwords across different accounts\n• Use a password manager to store them securely\n• Change passwords regularly\n• Enable 2FA for extra security\n\nWould you like more details on any of these tips?" },
+                { "phishing", "🎣 Phishing Prevention Tips:\n\n• Don't click suspicious links in emails or messages\n• Always verify sender email addresses\n• Look for spelling and grammar errors\n• Never share personal information via email\n• Report phishing emails to your IT department\n• When in doubt, delete it!\n\nHave you ever received a suspicious email before?" },
+                { "2fa", "🔑 Two-Factor Authentication (2FA):\n\n• Adds an extra layer of security to your accounts\n• Requires a code from your phone or authenticator app\n• Even if someone has your password, they can't access your account\n• Enable 2FA on all important accounts\n• Use an authenticator app instead of SMS when possible\n\nIt's one of the best ways to protect your accounts!" },
+                { "safe_browsing", "🌐 Safe Browsing Tips:\n\n• Always use HTTPS websites (look for the padlock icon)\n• Avoid public Wi-Fi for sensitive transactions\n• Use a VPN for secure browsing\n• Keep your browser updated\n• Don't download from untrusted sources\n• Use ad-blockers and privacy extensions\n\nThese habits will keep you much safer online!" },
+                { "social_engineering", "🧠 Social Engineering Awareness:\n\n• Be cautious of unsolicited requests for information\n• Verify identities before sharing sensitive data\n• Don't trust unexpected emails or phone calls\n• Hackers manipulate human psychology, not just computers\n• Always verify through a trusted channel\n• If it seems too good to be true, it probably is!\n\nWould you like to know how to spot social engineering attempts?" },
+                { "malware", "🦠 Malware Protection Tips:\n\n• Install reputable antivirus software\n• Keep your operating system updated\n• Don't download files from untrusted sources\n• Be careful with email attachments\n• Regular system scans are important\n• Use a firewall\n\nProtecting against malware is essential for keeping your data safe!" },
+                { "vpn", "🔒 VPN (Virtual Private Network):\n\n• Encrypts your internet traffic\n• Hides your IP address and location\n• Protects you on public Wi-Fi\n• Bypasses geographical restrictions\n• Choose a reputable VPN provider\n• Essential for privacy and security\n\nDo you use a VPN when connecting to public networks?" },
+                { "data_privacy", "🔏 Data Privacy Tips:\n\n• Review privacy settings on all accounts\n• Limit what personal information you share online\n• Use privacy-focused browsers and search engines\n• Be careful what you post on social media\n• Regularly review app permissions\n\nYour data is valuable - protect it!" },
+                { "software_updates", "📦 Software Update Tips:\n\n• Install updates as soon as they're available\n• Enable automatic updates where possible\n• Security patches fix known vulnerabilities\n• Don't ignore update notifications\n\nUpdates are one of the easiest ways to stay secure!" },
+                { "email_security", "📧 Email Security Tips:\n\n• Use a reputable email provider\n• Enable two-factor authentication\n• Be cautious of unexpected attachments\n• Use spam filters\n• Never share your password\n\nEmail is a common target - stay vigilant!" },
+                { "online_banking", "💰 Online Banking Safety:\n\n• Use strong, unique passwords\n• Enable 2FA for banking\n• Monitor your accounts regularly\n• Use secure networks only\n• Never share banking details\n\nYour finances are worth protecting!" },
+                { "public_wifi", "📶 Public Wi-Fi Safety:\n\n• Avoid accessing sensitive accounts on public Wi-Fi\n• Use a VPN when connecting to public networks\n• Turn off file sharing when on public Wi-Fi\n• Use your mobile data for sensitive transactions\n• Disable auto-connect to open networks\n\nPublic Wi-Fi is convenient but risky!" },
+                { "quiz", "🎯 Ready to test your cybersecurity knowledge? Go to the 'Quiz' tab and click 'Start Quiz'! You'll get immediate feedback on each of the 15 questions. Good luck! 🍀" }
+            };
+        }
+
+        private void InitializeFollowUpQuestions()
+        {
+            followUpQuestions = new Dictionary<string, List<string>>
+            {
+                { "password", new List<string> { "Would you like to know more about creating strong passwords?", "Do you use a password manager?" } },
+                { "phishing", new List<string> { "Have you ever received a suspicious email?", "Would you like to see an example of a phishing attempt?" } },
+                { "2fa", new List<string> { "Do you have 2FA enabled on your accounts?", "Would you like help enabling 2FA?" } },
+                { "malware", new List<string> { "Do you have antivirus software installed?", "Would you like tips on removing malware?" } },
+                { "vpn", new List<string> { "Do you use a VPN?", "Would you like VPN recommendations?" } },
+                { "social_engineering", new List<string> { "Have you ever been targeted by a social engineering attack?", "Would you like to learn how to identify social engineering?" } }
             };
         }
 
@@ -70,82 +111,180 @@ namespace CyberSecurityChatbot
         {
             string lowerInput = input.ToLower().Trim();
 
-            // Check for specific task commands
-            if (lowerInput.StartsWith("add task") || lowerInput.Contains("add a task") || lowerInput.Contains("create task"))
+            // =====================================================
+            // STEP 1: Check for specific task commands
+            // =====================================================
+
+            if (lowerInput.StartsWith("add task") || lowerInput.Contains("add a task") || lowerInput.Contains("create task") || lowerInput.Contains("add to do"))
             {
-                return "I see you want to add a task! 🗂️ Please go to the 'Tasks' tab and fill in the task details. You can also add a reminder!";
+                return "I see you want to add a task! 🗂️ Please go to the 'Tasks' tab and fill in the task details. You can add a title, description, and even set a reminder date. Would you like me to guide you through it?";
             }
 
-            if (lowerInput.Contains("complete task") || lowerInput.Contains("mark complete"))
+            if (lowerInput.Contains("complete task") || lowerInput.Contains("mark complete") || lowerInput.Contains("finish task"))
             {
-                return "To complete a task, go to the 'Tasks' tab, select a task, and click 'Mark Complete'. Great job staying organised! ✅";
+                return "To complete a task, go to the 'Tasks' tab, select a task, and click 'Mark Complete'. Great job staying organised! ✅ Is there a specific task you want to complete?";
             }
 
-            if (lowerInput.Contains("delete task") || lowerInput.Contains("remove task"))
+            if (lowerInput.Contains("delete task") || lowerInput.Contains("remove task") || lowerInput.Contains("clear task"))
             {
-                return "To delete a task, go to the 'Tasks' tab, select a task, and click 'Delete Task'. Be careful - this action cannot be undone! 🗑️";
+                return "To delete a task, go to the 'Tasks' tab, select a task, and click 'Delete Task'. Be careful - this action cannot be undone! 🗑️ Would you like to review your tasks before deleting?";
             }
 
-            // Check for activity log request
-            if (lowerInput.Contains("activity log") || lowerInput.Contains("what have you done") || lowerInput.Contains("show log") || lowerInput.Contains("recent actions"))
+            if (lowerInput.Contains("show tasks") || lowerInput.Contains("list tasks") || lowerInput.Contains("view tasks") || lowerInput.Contains("my tasks"))
             {
-                return "📜 You can view your full activity log in the 'Activity Log' tab. I track all your tasks, quiz attempts, and conversations!";
+                return "You can view all your tasks in the 'Tasks' tab. 📋 You can add, complete, or delete tasks there. Would you like me to explain any of these actions?";
             }
 
-            // Check for quiz request
-            if (lowerInput.Contains("quiz") || lowerInput.Contains("game") || lowerInput.Contains("test my knowledge") || lowerInput.Contains("play quiz"))
+            // =====================================================
+            // STEP 2: Check for activity log request
+            // =====================================================
+
+            if (lowerInput.Contains("activity log") || lowerInput.Contains("what have you done") || lowerInput.Contains("show log") || lowerInput.Contains("recent actions") || lowerInput.Contains("history"))
             {
-                return "🎯 Ready to test your cybersecurity knowledge? Go to the 'Quiz' tab and click 'Start Quiz'! You'll get immediate feedback on each of the 15 questions.";
+                return "📜 You can view your full activity log in the 'Activity Log' tab. I track all your tasks, quiz attempts, and conversations! Would you like to see your recent activity?";
             }
 
-            // Check for help
-            if (lowerInput.Contains("help") || lowerInput.Contains("what can you do") || lowerInput.Contains("assist"))
+            // =====================================================
+            // STEP 3: Check for quiz request
+            // =====================================================
+
+            if (lowerInput.Contains("quiz") || lowerInput.Contains("game") || lowerInput.Contains("test my knowledge") || lowerInput.Contains("play quiz") || lowerInput.Contains("take quiz"))
+            {
+                return "🎯 Ready to test your cybersecurity knowledge? Go to the 'Quiz' tab and click 'Start Quiz'! You'll get immediate feedback on each of the 15 questions. Are you ready to start?";
+            }
+
+            // =====================================================
+            // STEP 4: Check for help
+            // =====================================================
+
+            if (lowerInput.Contains("help") || lowerInput.Contains("what can you do") || lowerInput.Contains("assist") || lowerInput.Contains("options") || lowerInput.Contains("menu"))
             {
                 return GetResponse("help");
             }
 
-            // Check for cybersecurity topics FIRST (before greeting)
-            foreach (var intent in intentKeywords)
-            {
-                if (intent.Key == "add_task" || intent.Key == "reminder" || intent.Key == "help" ||
-                    intent.Key == "greeting" || intent.Key == "goodbye" || intent.Key == "thanks" ||
-                    intent.Key == "task_status" || intent.Key == "quiz" || intent.Key == "activity_log")
-                    continue;
+            // =====================================================
+            // STEP 5: Check for greeting (with name personalization)
+            // =====================================================
 
-                foreach (string keyword in intent.Value)
-                {
-                    if (lowerInput.Contains(keyword))
-                    {
-                        return GetResponse(intent.Key);
-                    }
-                }
+            if (IsGreeting(lowerInput) && lowerInput.Length < 20)
+            {
+                string[] engagingGreetings = {
+                    $"Hello, {userName}! 👋 Great to see you! I'm your Cybersecurity Awareness Assistant. How can I help you stay safe online today?",
+                    $"Hi {userName}! 👋 I'm here to help with cybersecurity, tasks, and quizzes. What would you like to explore today?",
+                    $"Hey {userName}! 👋 Ready to boost your cybersecurity knowledge? I can help with tips, tasks, and quizzes!",
+                    $"Welcome back, {userName}! 👋 How can I assist you with your cybersecurity journey today?"
+                };
+                return engagingGreetings[random.Next(engagingGreetings.Length)];
             }
 
-            // Check for greeting (only if input is short and only greeting)
-            if (IsGreeting(lowerInput) && lowerInput.Length < 15)
-            {
-                return $"Hello, {userName}! 👋 I'm your Cybersecurity Awareness Assistant. How can I help you today? 💬 You can ask about cybersecurity, tasks, or take a quiz!";
-            }
+            // =====================================================
+            // STEP 6: Check for goodbye
+            // =====================================================
 
-            // Check for goodbye
-            if (lowerInput.Contains("bye") || lowerInput.Contains("goodbye") || lowerInput.Contains("exit") || lowerInput.Contains("quit"))
+            if (lowerInput.Contains("bye") || lowerInput.Contains("goodbye") || lowerInput.Contains("see you") || lowerInput.Contains("exit") || lowerInput.Contains("quit") || lowerInput.Contains("later") || lowerInput.Contains("cya"))
             {
                 return GetResponse("goodbye");
             }
 
-            // Check for thanks
-            if (lowerInput.Contains("thank"))
+            // =====================================================
+            // STEP 7: Check for thanks
+            // =====================================================
+
+            if (lowerInput.Contains("thank") || lowerInput.Contains("thanks") || lowerInput.Contains("appreciate") || lowerInput.Contains("thx"))
             {
-                return GetResponse("thanks");
+                return "You're welcome! 😊 I'm always here to help you stay safe online. Feel free to ask me anything about cybersecurity, tasks, or take the quiz anytime! 🔒";
             }
 
-            // Default response
+            // =====================================================
+            // STEP 8: Check for cybersecurity topics with advanced detection
+            // =====================================================
+
+            string detectedIntent = DetectIntent(lowerInput);
+            if (detectedIntent != null)
+            {
+                string response = GetResponse(detectedIntent);
+
+                // Add follow-up question for engaging interaction
+                string followUp = GetFollowUpQuestion(detectedIntent);
+                if (!string.IsNullOrEmpty(followUp))
+                {
+                    response += "\n\n" + followUp;
+                }
+
+                return response;
+            }
+
+            // =====================================================
+            // STEP 9: Check if user is asking about the bot itself
+            // =====================================================
+
+            if (lowerInput.Contains("who are you") || lowerInput.Contains("what are you") || lowerInput.Contains("about you") || lowerInput.Contains("what do you do"))
+            {
+                return "I'm your Cybersecurity Awareness Assistant! 🛡️ I'm here to help you stay safe online. I can:\n\n• Provide cybersecurity tips (password, phishing, safe browsing, etc.)\n• Help you manage your tasks\n• Give you a cybersecurity quiz\n• Show you your activity log\n\nWhat would you like to learn about today?";
+            }
+
+            // =====================================================
+            // STEP 10: Default responses with engaging variations
+            // =====================================================
+
             return GetDefaultResponse();
+        }
+
+        private string DetectIntent(string input)
+        {
+            // First check for exact keyword matches
+            foreach (var intent in intentKeywords)
+            {
+                foreach (string keyword in intent.Value)
+                {
+                    if (input.Contains(keyword))
+                    {
+                        return intent.Key;
+                    }
+                }
+            }
+
+            // Then check for synonyms
+            foreach (var synonymGroup in intentSynonyms)
+            {
+                foreach (string synonym in synonymGroup.Value)
+                {
+                    if (input.Contains(synonym))
+                    {
+                        // Find the matching intent
+                        foreach (var intent in intentKeywords)
+                        {
+                            if (intent.Key == synonymGroup.Key)
+                            {
+                                return intent.Key;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Check for partial word matches (e.g., "pass" for "password")
+            foreach (var intent in intentKeywords)
+            {
+                foreach (string keyword in intent.Value)
+                {
+                    string[] words = keyword.Split(' ');
+                    foreach (string word in words)
+                    {
+                        if (word.Length >= 3 && input.Contains(word))
+                        {
+                            return intent.Key;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         private bool IsGreeting(string input)
         {
-            string[] greetings = { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening", "greetings" };
+            string[] greetings = { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening", "greetings", "yo", "sup", "whats up", "how are you" };
             foreach (string g in greetings)
             {
                 if (input.Contains(g))
@@ -161,16 +300,26 @@ namespace CyberSecurityChatbot
             return null;
         }
 
+        private string GetFollowUpQuestion(string intent)
+        {
+            if (followUpQuestions.ContainsKey(intent))
+            {
+                var questions = followUpQuestions[intent];
+                return questions[random.Next(questions.Count)];
+            }
+            return null;
+        }
+
         private string GetDefaultResponse()
         {
             string[] defaultResponses = {
-                "I'm not sure I understand that request. 🤔 Could you please rephrase? You can ask about:\n• Cybersecurity tips (password, phishing, safe browsing)\n• Adding or managing tasks\n• Taking the cybersecurity quiz\n• Viewing your activity log\n• Type 'help' for more options!",
-                "Hmm, I didn't quite catch that. 😕 Try asking me about password safety, phishing, or tasks! I'm here to help you stay secure online.",
-                "I'm still learning! 🧠 Could you try asking that differently? You can also use the tabs above for specific features like Tasks, Quiz, and Activity Log.",
-                "That's a new one! 🤖 I can help with cybersecurity questions, tasks, and quizzes. What would you like to do? Try typing 'help' for suggestions."
+                "That's an interesting question! 🤔 I'm not entirely sure I understand. Could you rephrase that? You can ask about:\n• Cybersecurity tips (password, phishing, safe browsing)\n• Adding or managing tasks\n• Taking the cybersecurity quiz\n• Viewing your activity log\n\nType 'help' for more options!",
+                "Hmm, I didn't quite catch that. 😕 Try asking me about password safety, phishing, or tasks! I'm here to help you stay secure online. What would you like to know?",
+                "I'm still learning, but I'm here to help! 🧠 Could you try asking that differently? You can also use the tabs above for specific features like Tasks, Quiz, and Activity Log.",
+                "Interesting! 🤖 I can help with cybersecurity questions, tasks, and quizzes. What would you like to do? Try typing 'help' for suggestions, or ask me about a specific security topic!",
+                "I want to help, but I'm not sure what you mean. 💬 Here are some things you can ask me about:\n• 'password' for password safety tips\n• 'phishing' to learn about phishing scams\n• '2fa' for two-factor authentication\n• 'malware' for protection tips\n• 'quiz' to start the cybersecurity quiz"
             };
-            Random rand = new Random();
-            return defaultResponses[rand.Next(defaultResponses.Length)];
+            return defaultResponses[random.Next(defaultResponses.Length)];
         }
     }
 }
