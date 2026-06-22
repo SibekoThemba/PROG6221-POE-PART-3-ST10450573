@@ -26,16 +26,28 @@ namespace CyberSecurityChatbot
         {
             intentKeywords = new Dictionary<string, List<string>>
             {
+                // Bot identity - CHECK THIS FIRST
+                { "bot_identity", new List<string> { "who are you", "what are you", "about you", "what do you do", "tell me about yourself", "who is this" } },
+                
+                // Task related
                 { "add_task", new List<string> { "add task", "new task", "create task", "add to do", "add todo", "create todo", "make task" } },
                 { "view_tasks", new List<string> { "show tasks", "list tasks", "view tasks", "tasks", "my tasks", "what tasks", "pending tasks", "task list" } },
                 { "complete_task", new List<string> { "complete task", "mark done", "finish task", "task done", "mark complete" } },
                 { "delete_task", new List<string> { "delete task", "remove task", "clear task", "erase task" } },
                 { "reminder", new List<string> { "remind", "reminder", "notify", "alert", "set reminder", "schedule reminder" } },
+                
+                // Help and navigation
                 { "help", new List<string> { "help", "what can you do", "assist", "guide", "help me", "options", "menu", "capabilities" } },
-                { "greeting", new List<string> { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening", "greetings", "yo", "sup", "whats up" } },
+                
+                // Greetings - CHECK LATER
+                { "greeting", new List<string> { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening", "greetings", "yo", "sup", "whats up", "how are you" } },
                 { "goodbye", new List<string> { "bye", "goodbye", "see you", "exit", "quit", "close", "later", "cya", "take care" } },
                 { "thanks", new List<string> { "thank", "thanks", "appreciate", "thank you", "thx", "much appreciated" } },
+                
+                // Activity log
                 { "activity_log", new List<string> { "show log", "activity log", "what have you done", "recent actions", "log", "history", "show activity" } },
+                
+                // Cybersecurity topics
                 { "password", new List<string> { "password", "passphrase", "login", "password safety", "password security", "secure password", "strong password", "passwords" } },
                 { "phishing", new List<string> { "phishing", "scam", "fraud", "suspicious", "email scam", "fake email", "cyber scam", "phishing email", "phishing attack" } },
                 { "2fa", new List<string> { "2fa", "two-factor", "multi-factor", "mfa", "two factor", "authentication", "two step", "2 factor" } },
@@ -68,6 +80,7 @@ namespace CyberSecurityChatbot
         {
             responseTemplates = new Dictionary<string, string>
             {
+                { "bot_identity", "🛡️ I'm your Cybersecurity Awareness Assistant! I'm here to help you stay safe online. I can:\n\n• Provide cybersecurity tips (password, phishing, safe browsing, etc.)\n• Help you manage your tasks\n• Give you a cybersecurity quiz\n• Show you your activity log\n\nWhat would you like to learn about today?" },
                 { "add_task", "I can help you add a task! 🗂️ Go to the 'Tasks' tab to add your cybersecurity tasks. You can add a title, description, and even a reminder date. Just type 'help' if you need guidance!" },
                 { "view_tasks", "You can view all your tasks in the 'Tasks' tab. 📋 I can help you add, complete, or delete tasks to stay organised. You currently have tasks pending - check the Tasks tab!" },
                 { "complete_task", "To complete a task, go to the 'Tasks' tab, select a task, and click 'Mark Complete'. Great job staying organised! ✅" },
@@ -112,7 +125,19 @@ namespace CyberSecurityChatbot
             string lowerInput = input.ToLower().Trim();
 
             // =====================================================
-            // STEP 1: Check for specific task commands
+            // STEP 1: Check for bot identity questions (BEFORE anything else)
+            // =====================================================
+
+            foreach (string keyword in intentKeywords["bot_identity"])
+            {
+                if (lowerInput.Contains(keyword))
+                {
+                    return GetResponse("bot_identity");
+                }
+            }
+
+            // =====================================================
+            // STEP 2: Check for specific task commands
             // =====================================================
 
             if (lowerInput.StartsWith("add task") || lowerInput.Contains("add a task") || lowerInput.Contains("create task") || lowerInput.Contains("add to do"))
@@ -136,7 +161,7 @@ namespace CyberSecurityChatbot
             }
 
             // =====================================================
-            // STEP 2: Check for activity log request
+            // STEP 3: Check for activity log request
             // =====================================================
 
             if (lowerInput.Contains("activity log") || lowerInput.Contains("what have you done") || lowerInput.Contains("show log") || lowerInput.Contains("recent actions") || lowerInput.Contains("history"))
@@ -145,7 +170,7 @@ namespace CyberSecurityChatbot
             }
 
             // =====================================================
-            // STEP 3: Check for quiz request
+            // STEP 4: Check for quiz request
             // =====================================================
 
             if (lowerInput.Contains("quiz") || lowerInput.Contains("game") || lowerInput.Contains("test my knowledge") || lowerInput.Contains("play quiz") || lowerInput.Contains("take quiz"))
@@ -154,7 +179,7 @@ namespace CyberSecurityChatbot
             }
 
             // =====================================================
-            // STEP 4: Check for help
+            // STEP 5: Check for help
             // =====================================================
 
             if (lowerInput.Contains("help") || lowerInput.Contains("what can you do") || lowerInput.Contains("assist") || lowerInput.Contains("options") || lowerInput.Contains("menu"))
@@ -163,44 +188,11 @@ namespace CyberSecurityChatbot
             }
 
             // =====================================================
-            // STEP 5: Check for greeting (with name personalization)
-            // =====================================================
-
-            if (IsGreeting(lowerInput) && lowerInput.Length < 20)
-            {
-                string[] engagingGreetings = {
-                    $"Hello, {userName}! 👋 Great to see you! I'm your Cybersecurity Awareness Assistant. How can I help you stay safe online today?",
-                    $"Hi {userName}! 👋 I'm here to help with cybersecurity, tasks, and quizzes. What would you like to explore today?",
-                    $"Hey {userName}! 👋 Ready to boost your cybersecurity knowledge? I can help with tips, tasks, and quizzes!",
-                    $"Welcome back, {userName}! 👋 How can I assist you with your cybersecurity journey today?"
-                };
-                return engagingGreetings[random.Next(engagingGreetings.Length)];
-            }
-
-            // =====================================================
-            // STEP 6: Check for goodbye
-            // =====================================================
-
-            if (lowerInput.Contains("bye") || lowerInput.Contains("goodbye") || lowerInput.Contains("see you") || lowerInput.Contains("exit") || lowerInput.Contains("quit") || lowerInput.Contains("later") || lowerInput.Contains("cya"))
-            {
-                return GetResponse("goodbye");
-            }
-
-            // =====================================================
-            // STEP 7: Check for thanks
-            // =====================================================
-
-            if (lowerInput.Contains("thank") || lowerInput.Contains("thanks") || lowerInput.Contains("appreciate") || lowerInput.Contains("thx"))
-            {
-                return "You're welcome! 😊 I'm always here to help you stay safe online. Feel free to ask me anything about cybersecurity, tasks, or take the quiz anytime! 🔒";
-            }
-
-            // =====================================================
-            // STEP 8: Check for cybersecurity topics with advanced detection
+            // STEP 6: Check for cybersecurity topics (BEFORE greetings)
             // =====================================================
 
             string detectedIntent = DetectIntent(lowerInput);
-            if (detectedIntent != null)
+            if (detectedIntent != null && detectedIntent != "greeting")
             {
                 string response = GetResponse(detectedIntent);
 
@@ -215,16 +207,40 @@ namespace CyberSecurityChatbot
             }
 
             // =====================================================
-            // STEP 9: Check if user is asking about the bot itself
+            // STEP 7: Check for greeting (with exact word matching)
             // =====================================================
 
-            if (lowerInput.Contains("who are you") || lowerInput.Contains("what are you") || lowerInput.Contains("about you") || lowerInput.Contains("what do you do"))
+            if (IsGreeting(lowerInput))
             {
-                return "I'm your Cybersecurity Awareness Assistant! 🛡️ I'm here to help you stay safe online. I can:\n\n• Provide cybersecurity tips (password, phishing, safe browsing, etc.)\n• Help you manage your tasks\n• Give you a cybersecurity quiz\n• Show you your activity log\n\nWhat would you like to learn about today?";
+                string[] engagingGreetings = {
+                    $"Hello, {userName}! 👋 Great to see you! I'm your Cybersecurity Awareness Assistant. How can I help you stay safe online today?",
+                    $"Hi {userName}! 👋 I'm here to help with cybersecurity, tasks, and quizzes. What would you like to explore today?",
+                    $"Hey {userName}! 👋 Ready to boost your cybersecurity knowledge? I can help with tips, tasks, and quizzes!",
+                    $"Welcome back, {userName}! 👋 How can I assist you with your cybersecurity journey today?"
+                };
+                return engagingGreetings[random.Next(engagingGreetings.Length)];
             }
 
             // =====================================================
-            // STEP 10: Default responses with engaging variations
+            // STEP 8: Check for goodbye
+            // =====================================================
+
+            if (lowerInput.Contains("bye") || lowerInput.Contains("goodbye") || lowerInput.Contains("see you") || lowerInput.Contains("exit") || lowerInput.Contains("quit") || lowerInput.Contains("later") || lowerInput.Contains("cya") || lowerInput.Contains("take care"))
+            {
+                return GetResponse("goodbye");
+            }
+
+            // =====================================================
+            // STEP 9: Check for thanks
+            // =====================================================
+
+            if (lowerInput.Contains("thank") || lowerInput.Contains("thanks") || lowerInput.Contains("appreciate") || lowerInput.Contains("thx"))
+            {
+                return GetResponse("thanks");
+            }
+
+            // =====================================================
+            // STEP 10: Default responses
             // =====================================================
 
             return GetDefaultResponse();
@@ -235,6 +251,8 @@ namespace CyberSecurityChatbot
             // First check for exact keyword matches
             foreach (var intent in intentKeywords)
             {
+                if (intent.Key == "greeting" || intent.Key == "bot_identity") continue; // Skip these
+
                 foreach (string keyword in intent.Value)
                 {
                     if (input.Contains(keyword))
@@ -251,7 +269,6 @@ namespace CyberSecurityChatbot
                 {
                     if (input.Contains(synonym))
                     {
-                        // Find the matching intent
                         foreach (var intent in intentKeywords)
                         {
                             if (intent.Key == synonymGroup.Key)
@@ -263,32 +280,33 @@ namespace CyberSecurityChatbot
                 }
             }
 
-            // Check for partial word matches (e.g., "pass" for "password")
-            foreach (var intent in intentKeywords)
-            {
-                foreach (string keyword in intent.Value)
-                {
-                    string[] words = keyword.Split(' ');
-                    foreach (string word in words)
-                    {
-                        if (word.Length >= 3 && input.Contains(word))
-                        {
-                            return intent.Key;
-                        }
-                    }
-                }
-            }
-
             return null;
         }
 
         private bool IsGreeting(string input)
         {
+            // Use word boundary detection to avoid "phishing" matching "hi"
             string[] greetings = { "hello", "hi", "hey", "howdy", "good morning", "good afternoon", "good evening", "greetings", "yo", "sup", "whats up", "how are you" };
             foreach (string g in greetings)
             {
                 if (input.Contains(g))
-                    return true;
+                {
+                    // Make sure it's a whole word match for short greetings like "hi"
+                    if (g.Length <= 3)
+                    {
+                        // Check if it's a separate word
+                        string[] words = input.Split(' ');
+                        foreach (string word in words)
+                        {
+                            if (word == g)
+                                return true;
+                        }
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
             }
             return false;
         }
