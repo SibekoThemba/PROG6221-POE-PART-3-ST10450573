@@ -389,115 +389,114 @@ namespace CyberSecurityChatbot
         }
 
         // =====================================================
-        // QUIZ TAB - IMPROVED VERSION
+        // QUIZ TAB - FIXED VERSION
         // =====================================================
 
         private void InitializeQuizUI()
         {
             lblQuestion.Text = "🎯 Ready to test your cybersecurity knowledge?";
             rtbQuestion.Text = "Click 'Start Quiz' to begin! You'll answer 15 questions covering:\n\n• Password Safety\n• Phishing Prevention\n• Social Engineering\n• Malware Protection\n• Safe Browsing\n• And more!";
-            rtbQuestion.Font = new Font("Segoe UI", 11);
-            rtbQuestion.ForeColor = Color.FromArgb(50, 50, 60);
-            rtbQuestion.BackColor = Color.FromArgb(245, 245, 250);
             lblQuizScore.Text = "Score: 0 / 15";
-            lblQuizScore.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            lblQuizScore.ForeColor = Color.FromArgb(67, 97, 238);
+            btnStartQuiz.Enabled = true;
+            btnNextQuestion.Enabled = false;
+            btnSubmitQuiz.Enabled = false;
+            rtbQuizFeedback.Clear();
+            rtbQuizFeedback.BackColor = Color.White;
         }
 
         private void LoadQuizQuestions()
         {
             quizQuestions = new QuizQuestion[]
             {
-                // 15 comprehensive cybersecurity questions covering all topics
                 new QuizQuestion(
                     "What is the most common type of cyber attack?",
                     new string[] { "A) Phishing", "B) Ransomware", "C) DDoS", "D) Man-in-the-Middle" },
                     0,
-                    "📌 Phishing is the most common type of cyber attack, where attackers trick users into revealing sensitive information. According to cybersecurity reports, over 80% of reported security incidents involve phishing."
+                    "📌 Phishing is the most common type of cyber attack, where attackers trick users into revealing sensitive information."
                 ),
                 new QuizQuestion(
                     "What should you do if you receive a suspicious email?",
                     new string[] { "A) Reply to ask who sent it", "B) Click the link to check", "C) Report it as phishing", "D) Forward it to friends" },
                     2,
-                    "📌 Report suspicious emails as phishing. Do NOT click links or reply. Most email providers have a 'Report Phishing' button. This helps protect you and others from scams."
+                    "📌 Report suspicious emails as phishing. Do NOT click links or reply."
                 ),
                 new QuizQuestion(
                     "Which of the following is a strong password?",
                     new string[] { "A) 123456", "B) password", "C) P@ssw0rd!2024", "D) yourname" },
                     2,
-                    "📌 A strong password contains uppercase, lowercase, numbers, and special characters. 'P@ssw0rd!2024' is much stronger than common words or number sequences."
+                    "📌 A strong password contains uppercase, lowercase, numbers, and special characters."
                 ),
                 new QuizQuestion(
                     "True or False: Using the same password for multiple accounts is safe.",
                     new string[] { "A) True", "B) False" },
                     1,
-                    "📌 FALSE! Using the same password for multiple accounts is very dangerous. If one account is compromised, all others become vulnerable. Use unique passwords for each account."
+                    "📌 FALSE! Using the same password for multiple accounts is very dangerous."
                 ),
                 new QuizQuestion(
                     "What is two-factor authentication (2FA)?",
                     new string[] { "A) A password manager", "B) A second layer of security", "C) A type of antivirus", "D) A VPN service" },
                     1,
-                    "📌 2FA adds a second layer of security, typically requiring a code from your phone or authenticator app in addition to your password. It significantly reduces the risk of unauthorised access."
+                    "📌 2FA adds a second layer of security, typically requiring a code from your phone."
                 ),
                 new QuizQuestion(
                     "What is social engineering in cybersecurity?",
                     new string[] { "A) Engineering software", "B) Manipulating people to reveal information", "C) Building social networks", "D) Creating engineering designs" },
                     1,
-                    "📌 Social engineering is the psychological manipulation of people to divulge confidential information. It exploits human trust rather than technical vulnerabilities."
+                    "📌 Social engineering is the psychological manipulation of people to divulge confidential information."
                 ),
                 new QuizQuestion(
                     "True or False: Public Wi-Fi is always safe to use for online banking.",
                     new string[] { "A) True", "B) False" },
                     1,
-                    "📌 FALSE! Public Wi-Fi is often unsecured and can be intercepted by attackers. Always use a VPN or mobile data for sensitive transactions on public networks."
+                    "📌 FALSE! Public Wi-Fi is often unsecured and can be intercepted by attackers."
                 ),
                 new QuizQuestion(
                     "What should you do with software updates?",
                     new string[] { "A) Ignore them", "B) Install them immediately", "C) Wait a few months", "D) Only install paid updates" },
                     1,
-                    "📌 Install software updates immediately! They often contain critical security patches that fix known vulnerabilities. Delaying updates leaves your devices exposed."
+                    "📌 Install software updates immediately! They often contain critical security patches."
                 ),
                 new QuizQuestion(
                     "What is ransomware?",
                     new string[] { "A) Free software", "B) Software that holds your data hostage", "C) A type of antivirus", "D) A password manager" },
                     1,
-                    "📌 Ransomware is malicious software that encrypts your files and demands payment for decryption. Never pay the ransom! Instead, maintain regular backups of your important data."
+                    "📌 Ransomware is malicious software that encrypts your files and demands payment."
                 ),
                 new QuizQuestion(
                     "True or False: Phishing attacks only happen via email.",
                     new string[] { "A) True", "B) False" },
                     1,
-                    "📌 FALSE! Phishing can happen via email, SMS (smishing), phone calls (vishing), social media, and even QR codes. Always be suspicious of unexpected requests for information."
+                    "📌 FALSE! Phishing can happen via email, SMS, phone calls, social media, and QR codes."
                 ),
                 new QuizQuestion(
                     "What is the best defense against phishing?",
                     new string[] { "A) Antivirus", "B) Firewall", "C) User awareness", "D) VPN" },
                     2,
-                    "📌 User awareness is the best defense against phishing. Always verify the source before clicking links or sharing information. Technology helps, but human vigilance is the strongest protection."
+                    "📌 User awareness is the best defense against phishing. Always verify the source."
                 ),
                 new QuizQuestion(
                     "True or False: HTTPS websites are always safe.",
                     new string[] { "A) True", "B) False" },
                     1,
-                    "📌 FALSE! HTTPS encrypts data in transit, but the website itself could still be malicious. Always check the URL carefully and look for signs of phishing or fake sites."
+                    "📌 FALSE! HTTPS encrypts data, but the website itself could still be malicious."
                 ),
                 new QuizQuestion(
                     "What is a zero-day vulnerability?",
                     new string[] { "A) A vulnerability that never existed", "B) A vulnerability discovered before a patch exists", "C) A vulnerability fixed immediately", "D) A vulnerability on Day 0 of a project" },
                     1,
-                    "📌 A zero-day vulnerability is a flaw discovered before the vendor has created a patch, making it very dangerous. Attackers can exploit it before it's fixed."
+                    "📌 A zero-day vulnerability is a flaw discovered before the vendor has created a patch."
                 ),
                 new QuizQuestion(
                     "Why should you use a password manager?",
                     new string[] { "A) It remembers all your passwords", "B) It creates strong passwords", "C) It saves you time", "D) All of the above" },
                     3,
-                    "📌 All of the above! Password managers generate, store, and autofill strong, unique passwords for all your accounts. This makes security easier and more effective."
+                    "📌 All of the above! Password managers generate, store, and autofill strong, unique passwords."
                 ),
                 new QuizQuestion(
                     "True or False: It is safe to use the same password for work and personal accounts.",
                     new string[] { "A) True", "B) False" },
                     1,
-                    "📌 FALSE! Never reuse passwords between work and personal accounts. A breach in one could compromise the other. Keep them separate for better security."
+                    "📌 FALSE! Never reuse passwords between work and personal accounts."
                 )
             };
             totalQuestions = quizQuestions.Length;
@@ -510,13 +509,15 @@ namespace CyberSecurityChatbot
             quizScore = 0;
             questionsAnswered = 0;
             Array.Clear(questionAnsweredCorrectly, 0, questionAnsweredCorrectly.Length);
+
             btnStartQuiz.Enabled = false;
             btnNextQuestion.Enabled = true;
             btnSubmitQuiz.Enabled = false;
+
             rtbQuizFeedback.Clear();
             rtbQuizFeedback.BackColor = Color.White;
             lblQuizScore.Text = "Score: 0 / " + totalQuestions;
-            lblQuizScore.ForeColor = Color.FromArgb(67, 97, 238);
+
             LoadQuestion();
             logger.LogActivity(userName, "Quiz_Started", "User started the cybersecurity quiz");
             RefreshActivityLog();
@@ -533,16 +534,9 @@ namespace CyberSecurityChatbot
             var q = quizQuestions[currentQuestionIndex];
             int questionNumber = currentQuestionIndex + 1;
             lblQuestion.Text = $"📝 Question {questionNumber} of {totalQuestions}";
-            lblQuestion.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            lblQuestion.ForeColor = Color.FromArgb(50, 50, 60);
-
-            // Show progress in question text
             rtbQuestion.Text = q.Question;
-            rtbQuestion.Font = new Font("Segoe UI", 11);
-            rtbQuestion.ForeColor = Color.FromArgb(40, 40, 50);
-            rtbQuestion.BackColor = Color.FromArgb(245, 245, 250);
 
-            // Clear and populate radio buttons with improved styling
+            // Clear and populate radio buttons
             panelOptions.Controls.Clear();
             int radioCount = 0;
             foreach (string option in q.Options)
@@ -558,13 +552,33 @@ namespace CyberSecurityChatbot
                 radioCount++;
             }
 
-            rtbQuizFeedback.Clear();
-            rtbQuizFeedback.BackColor = Color.White;
+            // DO NOT CLEAR FEEDBACK - keep it visible from previous answer!
+            // Only reset button states
+            btnNextQuestion.Text = "➡️ Next";
             btnNextQuestion.Enabled = true;
+            btnSubmitQuiz.Enabled = false;
+
+            // Enable all radio buttons for new question
+            foreach (Control ctrl in panelOptions.Controls)
+            {
+                if (ctrl is RadioButton rb)
+                {
+                    rb.Enabled = true;
+                    rb.Checked = false;
+                }
+            }
         }
 
         private void btnNextQuestion_Click(object sender, EventArgs e)
         {
+            // Check if we're in "Submit" mode
+            if (btnNextQuestion.Text == "🏆 Submit Quiz")
+            {
+                FinishQuiz();
+                return;
+            }
+
+            // Find selected answer
             RadioButton selected = null;
             foreach (Control ctrl in panelOptions.Controls)
             {
@@ -585,51 +599,56 @@ namespace CyberSecurityChatbot
             var q = quizQuestions[currentQuestionIndex];
             questionsAnswered++;
 
-            // Check answer and provide detailed feedback
+            // Check answer and show feedback with color
             bool isCorrect = (selectedIndex == q.CorrectAnswerIndex);
+            string correctAnswer = q.Options[q.CorrectAnswerIndex];
+
             if (isCorrect)
             {
                 quizScore++;
                 questionAnsweredCorrectly[currentQuestionIndex] = true;
-                rtbQuizFeedback.BackColor = Color.FromArgb(200, 255, 200); // Light green
-                rtbQuizFeedback.Text = "✅ CORRECT! ";
+                rtbQuizFeedback.BackColor = Color.LightGreen;
+                rtbQuizFeedback.Text = "✅ CORRECT!\n\n" + q.Explanation;
                 logger.LogActivity(userName, "Quiz_Answer", $"Correct answer for Q{currentQuestionIndex + 1}");
             }
             else
             {
                 questionAnsweredCorrectly[currentQuestionIndex] = false;
-                rtbQuizFeedback.BackColor = Color.FromArgb(255, 200, 200); // Light pink
-                rtbQuizFeedback.Text = "❌ INCORRECT. ";
+                rtbQuizFeedback.BackColor = Color.LightPink;
+                rtbQuizFeedback.Text = $"❌ INCORRECT. The correct answer was: {correctAnswer}\n\n" + q.Explanation;
                 logger.LogActivity(userName, "Quiz_Answer", $"Incorrect answer for Q{currentQuestionIndex + 1}");
             }
 
-            // Show the explanation with the correct answer highlighted
-            string correctAnswer = q.Options[q.CorrectAnswerIndex];
-            rtbQuizFeedback.Text += $"\n\n📖 Explanation:\n{q.Explanation}\n\n";
-            rtbQuizFeedback.Text += $"💡 The correct answer was: {correctAnswer}";
-            rtbQuizFeedback.Font = new Font("Segoe UI", 10);
-            rtbQuizFeedback.ForeColor = Color.FromArgb(30, 30, 40);
-
-            // Update score with progress
-            lblQuizScore.Text = $"Score: {quizScore} / {totalQuestions}";
-
-            // Show progress bar (text-based)
+            // Update score
             int progress = (int)((double)(currentQuestionIndex + 1) / totalQuestions * 100);
-            string progressBar = new string('▓', progress / 5) + new string('░', 20 - (progress / 5));
-            lblQuizScore.Text += $"  📊 [{progressBar}] {progress}%";
-
+            lblQuizScore.Text = $"Score: {quizScore} / {totalQuestions}  📊 {progress}%";
             RefreshActivityLog();
+
+            // Disable radio buttons
+            foreach (Control ctrl in panelOptions.Controls)
+            {
+                if (ctrl is RadioButton rb)
+                {
+                    rb.Enabled = false;
+                }
+            }
+
+            // Move to next question index
             currentQuestionIndex++;
 
+            // Check if all questions are answered
             if (currentQuestionIndex >= totalQuestions)
             {
-                btnNextQuestion.Enabled = false;
-                btnSubmitQuiz.Enabled = true;
+                // All questions answered - show Submit
+                btnNextQuestion.Text = "🏆 Submit Quiz";
+                btnNextQuestion.Enabled = true;
+                // Feedback stays visible, last question stays visible
             }
             else
             {
-                btnNextQuestion.Enabled = true;
+                // Load the next question IMMEDIATELY while feedback stays visible
                 LoadQuestion();
+                // Feedback is NOT cleared because we removed that line!
             }
         }
 
@@ -646,56 +665,35 @@ namespace CyberSecurityChatbot
 
             double percentage = ((double)quizScore / totalQuestions) * 100;
 
-            // Detailed feedback based on score
             string feedback;
-            if (percentage >= 90)
-            {
-                feedback = "🌟 EXCELLENT! You're a cybersecurity expert! Your knowledge of online safety is outstanding. Keep up the great work and help others stay safe too!";
-            }
-            else if (percentage >= 80)
-            {
-                feedback = "🌟 GREAT JOB! You have a strong understanding of cybersecurity. You're well-prepared to protect yourself online. Consider sharing your knowledge with friends and family.";
-            }
-            else if (percentage >= 60)
-            {
-                feedback = "👍 GOOD EFFORT! You have a solid foundation in cybersecurity. Review the topics you missed to strengthen your knowledge. Remember, security is a continuous learning process!";
-            }
-            else if (percentage >= 40)
-            {
-                feedback = "📚 KEEP LEARNING! You've made a good start. Focus on understanding phishing, password safety, and social engineering - these are the most common threats you'll face online.";
-            }
-            else
-            {
-                feedback = "📚 START WITH THE BASICS! Cybersecurity is important for everyone. Review the tips section of this chatbot to learn more about protecting yourself online. You can retake the quiz anytime!";
-            }
+            if (percentage >= 90) feedback = "🌟 EXCELLENT! You're a cybersecurity expert!";
+            else if (percentage >= 80) feedback = "🌟 GREAT JOB! You have a strong understanding of cybersecurity.";
+            else if (percentage >= 60) feedback = "👍 GOOD EFFORT! You have a solid foundation in cybersecurity.";
+            else if (percentage >= 40) feedback = "📚 KEEP LEARNING! Focus on understanding phishing, password safety, and social engineering.";
+            else feedback = "📚 START WITH THE BASICS! Review the tips section to learn more.";
 
-            // Show detailed results
             string resultSummary = $"🏆 QUIZ COMPLETE!\n\n";
             resultSummary += $"Final Score: {quizScore} / {totalQuestions} ({percentage:F1}%)\n\n";
-            resultSummary += $"📊 Performance Summary:\n";
-            resultSummary += $"   • Correct: {quizScore}\n";
-            resultSummary += $"   • Incorrect: {totalQuestions - quizScore}\n\n";
-            resultSummary += $"💡 {feedback}\n\n";
+            resultSummary += $"{feedback}\n\n";
 
-            // Show question breakdown
             resultSummary += "📋 Question Breakdown:\n";
             for (int i = 0; i < totalQuestions; i++)
             {
                 string status = questionAnsweredCorrectly[i] ? "✅" : "❌";
-                resultSummary += $"   {status} Question {i + 1}: {quizQuestions[i].Question.Substring(0, Math.Min(40, quizQuestions[i].Question.Length))}...\n";
+                resultSummary += $"   {status} Q{i + 1}\n";
             }
 
-            rtbQuizFeedback.BackColor = Color.FromArgb(255, 255, 220); // Light yellow
+            rtbQuizFeedback.BackColor = Color.LightYellow;
             rtbQuizFeedback.Text = resultSummary;
-            rtbQuizFeedback.Font = new Font("Segoe UI", 10);
-            rtbQuizFeedback.ForeColor = Color.FromArgb(30, 30, 40);
 
             lblQuizScore.Text = $"🏆 Final Score: {quizScore} / {totalQuestions}";
-            lblQuizScore.ForeColor = percentage >= 70 ? Color.FromArgb(40, 167, 69) : Color.FromArgb(220, 53, 69);
 
             db.SaveQuizResult(userName, quizScore, totalQuestions);
             logger.LogActivity(userName, "Quiz_Completed", $"Quiz completed with score {quizScore}/{totalQuestions}");
             RefreshActivityLog();
+
+            // Reset button
+            btnNextQuestion.Text = "➡️ Next";
         }
 
         // =====================================================
